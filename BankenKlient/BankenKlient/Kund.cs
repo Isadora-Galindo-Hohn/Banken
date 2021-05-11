@@ -10,7 +10,7 @@ namespace BankenKlient
     {
         string namn;
         int personnummer;
-        int antalKonton;
+        int antalKonton = 0;
         string kundnummer;
         Lista<Konto> konton = new Lista<Konto>();
 
@@ -29,9 +29,32 @@ namespace BankenKlient
             antalKonton = konton.Length();
         }
 
-        public void SkapaNyttKonto(string kontonamn, int saldo)
+        public void SkapaNyttKonto(string kontotyp, string kontonamn, double saldo, double extraParameter = 0)
         {
-            konton.Add(new Sparkonto(kontonamn, saldo, this.kundnummer, this.antalKonton++));
+            if (kontotyp == "Debitkonto")
+            {
+                konton.Add(new Konto(kontonamn, saldo, this.kundnummer, this.antalKonton++));
+            }
+            else if (kontotyp == "Lönekonto")
+            {
+                konton.Add(new Lönekonto(kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
+            }
+            else if (kontotyp == "Sparkonto")
+            {
+                konton.Add(new Sparkonto(kontonamn, saldo, this.kundnummer, this.antalKonton++));
+            }
+            else if (kontotyp == "Fondkonto")
+            {
+                konton.Add(new Fondkonto(kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
+            }
+        }
+
+        public Konto FåNyasteKonto
+        {
+            get
+            {
+                return konton[konton.Length()-1];
+            }
         }
 
         public Lista<Konto> FåKontolista
@@ -41,6 +64,7 @@ namespace BankenKlient
                 return konton;
             }
         }
+
 
         public string FåKundnummer
         {
@@ -65,13 +89,25 @@ namespace BankenKlient
             }
         }
 
-        public void SkrivUtKonton()
+        public void SkrivUtKonton(int val)
         {
-            for (int i = 0; i < konton.Length(); i++)
+            if (val == 1)
             {
-                Console.WriteLine(konton[i].FåKontoNamn +"\t\t" + konton[i].FåKontoSaldo);
-                Console.WriteLine();
+                for (int i = 0; i < konton.Length(); i++)
+                {
+                    Console.WriteLine(konton[i].FåKontoNamn + "\t\t" + konton[i].FåKontoSaldo);
+                    Console.WriteLine();
+                }
             }
+            else if (val == 2)
+            {
+                for (int i = 0; i < konton.Length(); i++)
+                {
+                    Console.WriteLine((i+1) +konton[i].FåKontoNamn + "\t\t" + konton[i].FåKontoSaldo);
+                    Console.WriteLine();
+                }
+            }
+            
         }
 
 

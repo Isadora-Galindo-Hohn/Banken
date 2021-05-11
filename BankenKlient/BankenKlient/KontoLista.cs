@@ -24,6 +24,10 @@ namespace BankenKlient
             {
                 return items[index];
             }
+            set 
+            {
+                items[index] = value;
+            }
         }
 
         public void Add(T newItem)
@@ -36,6 +40,14 @@ namespace BankenKlient
             }
 
             newItems[newItems.Length - 1] = newItem;
+
+            items = newItems;
+        }
+
+        public void Remove(int index)
+        {
+            T[] newItems = new T[items.Length - 1];
+
 
             items = newItems;
         }

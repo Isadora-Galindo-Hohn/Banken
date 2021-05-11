@@ -17,14 +17,13 @@ namespace BankenKlient
 
             Lista<Kund> kunder = new Lista<Kund>();
 
+            Kund inloggadKund = null;
             while (true)
             {
                 try
                 {
                     //meny som består av en switch som skickar använderen till olika metoder beroende på vilket case som anropas
                     string menyVal = "";
-                    Kund inloggadKund = null;
-
 
                     while (menyVal != "5")
                     {
@@ -54,27 +53,27 @@ namespace BankenKlient
                             case "2":
                                 if (inloggadKund == null)
                                 {
+                                    inloggadKund = LoggaIn(kunder);
+                                }
+                                else
+                                {
                                     Console.WriteLine("Du har redan loggat in.");
                                     Console.WriteLine("Om du vill logga ut måste du först logga ut.");
                                     Console.WriteLine("Tryck på enter för att gå vidare till menyn.");
                                     Console.ReadLine();
-                                }
-                                else
-                                {
-                                    inloggadKund = LoggaIn(kunder);
                                 }
                                 break;
 
                             case "3":
                                 if (inloggadKund == null)
                                 {
-
-                                }
-                                else
-                                {
                                     Console.WriteLine("Du måste logga in för att göra konto operationer");
                                     Console.WriteLine("Tryck på enter för att gå vidare till menyn.");
                                     Console.ReadLine();
+                                }
+                                else
+                                {
+                                    KontoOperationer(kunder, inloggadKund);
                                 }
                                 break;
 
@@ -267,7 +266,6 @@ namespace BankenKlient
         {
             string menyVal = "";
 
-
             while (menyVal != "6")
             {
                 Console.Clear();
@@ -291,7 +289,7 @@ namespace BankenKlient
                 switch (menyVal)
                 {
                     case "1":
-
+                        kunder = SkapaNyttKonto(kunder, inloggadKund);
                         break;
 
                     case "2":
@@ -314,7 +312,7 @@ namespace BankenKlient
                         }
                         else
                         {
-                            VisaKonton(inloggadKund);
+                            VisaKontoHistorik(inloggadKund);
                         }
                         break;
 
@@ -330,22 +328,215 @@ namespace BankenKlient
                         break;
                 }
             }
+            return kunder;
+        }
+
+        static Lista<Kund> SkapaNyttKonto(Lista<Kund> kunder, Kund inloggadKund)
+        {
+            string menyVal = "";
+            string saldoIText;
+            double saldo = 0;
+            double lön = 0;
+            string kontonamn = "";
+
+            while (menyVal != "5")
+            {
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("----------------------------------------------------");
+                Console.WriteLine("                   Välj kontotyp                    ");
+                Console.WriteLine("----------------------------------------------------");
+                Console.WriteLine();
+                Console.WriteLine("1. Debitkonto");
+                Console.WriteLine("2. Lönekonto");
+                Console.WriteLine("3. Sparkonto");
+                Console.WriteLine("4. Fondkonto");
+                Console.WriteLine("5. Gå tillbaka till menyn");
+                Console.WriteLine("Skriv in siffra mellan 1-5 och tryck sedan Enter...");
+                Console.WriteLine();
+
+                menyVal = Console.ReadLine();
+
+                Console.Clear();
+                switch (menyVal)
+                {
+                    case "1":
+                        Console.WriteLine("Skapa ett debitkonto!");
+                        Console.Write("Kontonamn: ");
+                        kontonamn = Console.ReadLine();
+
+                        Console.Write("Saldo: ");
+
+                        saldoIText = Console.ReadLine();
+                        bool lyckad = double.TryParse(saldoIText, out saldo);
+
+                        if (lyckad == false)
+                        {
+                            while (lyckad == false)
+                            {
+                                Console.WriteLine("Saldot ska vara skrivet med siffror och måste vara större än 0");
+                                Console.Write("Saldo: ");
+                                saldoIText = Console.ReadLine();
+                                lyckad = double.TryParse(saldoIText, out saldo);
+                            }
+                        }
+
+                        inloggadKund.SkapaNyttKonto("Debitkonto", kontonamn, saldo);
+                        Console.WriteLine("Du har nu skapat ett debitkonto med kontonummret " + inloggadKund.FåNyasteKonto.FåKontoNummer + "!");
+                        Console.ReadLine();
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Skapa ett lönekonto!");
+                        Console.Write("Kontonamn: ");
+                        kontonamn = Console.ReadLine();
+
+                        Console.Write("Lön: ");
+                        saldoIText = Console.ReadLine();
+                        lyckad = double.TryParse(saldoIText, out lön);
+
+                        if (lyckad == false)
+                        {
+                            while (lyckad == false)
+                            {
+                                Console.WriteLine("Du kan inte ha en lön på under 0 kr");
+                                Console.Write("Lön: ");
+                                saldoIText = Console.ReadLine();
+                                lyckad = double.TryParse(saldoIText, out lön);
+                            }
+                        }
+
+                        inloggadKund.SkapaNyttKonto("Lönekonto", kontonamn, lön, lön);
+                        Console.WriteLine("Du har nu skapat ett lönekonto med kontonummret " + inloggadKund.FåNyasteKonto.FåKontoNummer + "!");
+                        Console.ReadLine();
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Skapa ett sparkonto!");
+                        Console.Write("Kontonamn: ");
+                        kontonamn = Console.ReadLine();
+
+                        Console.Write("Saldo: ");
+                        saldoIText = Console.ReadLine();
+                        lyckad = double.TryParse(saldoIText, out lön);
+                        if (lyckad == false)
+                        {
+                            while (lyckad == false)
+                            {
+                                Console.WriteLine("Du kan inte ha ett saldo under 0 kr");
+                                Console.Write("Saldo: ");
+                                saldo = int.Parse(Console.ReadLine());
+                            }
+                        }
+
+                        inloggadKund.SkapaNyttKonto("Sparkonto", kontonamn, saldo);
+                        Konto nyttKonto = inloggadKund.FåNyasteKonto;
+                        Console.WriteLine("Du fick kontot");
+                        Console.ReadLine();
+                        Console.WriteLine("Du har nu skapat ett sparkonto med kontonummret " + inloggadKund.FåNyasteKonto.FåKontoNummer + " och har en ränta på 3%!");
+                        Console.ReadLine();
+                        break;
+
+                    case "4":
+                        Console.WriteLine("Skapa ett Fondkonto!");
+                        Console.Write("Kontonamn: ");
+                        kontonamn = Console.ReadLine();
+                        Console.WriteLine();
+
+                        Console.WriteLine("Välj risk alternativ:");
+                        Console.WriteLine("1. Risk 1, +-1% vinst");
+                        Console.WriteLine("2. Risk 2, +-2% vinst ");
+                        Console.WriteLine("3. Risk 3, +-3% vinst ");
+                        Console.Write("Risk: ");
+                        int risk = int.Parse(Console.ReadLine());
+                        if (!(risk == 1 || risk == 2 || risk == 3))
+                        {
+                            while (!(risk == 1 || risk == 2 || risk == 3))
+                            {
+                                Console.WriteLine("Du måste välja risk 1, 2 eller 3");
+                                Console.Write("Saldo: ");
+                                risk = int.Parse(Console.ReadLine());
+                            }
+                        }
+
+                        Console.Write("Saldo: ");
+                        saldo = double.Parse(Console.ReadLine());
+                        if (saldo < 0)
+                        {
+                            while (saldo < 0)
+                            {
+                                Console.WriteLine("Du kan inte ha ett saldo under 0 kr");
+                                Console.Write("Saldo: ");
+                                saldo = int.Parse(Console.ReadLine());
+                            }
+                        }
+
+                        inloggadKund.SkapaNyttKonto("Fondkonto", kontonamn, saldo, risk);
+                        Console.WriteLine("Du har nu skapat ett fondkonto med kontonummret " + inloggadKund.FåNyasteKonto.FåKontoNummer + " och risk "+ risk +"!");
+                        Console.ReadLine();
+                        break;
+
+                    default: //default gör att så läge stringen inte är lika med 1-3 går den hit och visar menyn igen
+                        break;
+                }
+            }
+
+            for (int i = 0; i < kunder.Length(); i++)
+            {
+                if (kunder[i].FåKundnummer == inloggadKund.FåKundnummer)
+                {
+                    kunder[i] = inloggadKund;
+                }
+            }
 
             return kunder;
-
         }
 
         static void VisaKonton(Kund inloggadKund)
         {
             Console.WriteLine("Kontonamn: \t\tSaldo: ");
             Console.WriteLine("---------------------------------------------------------------");
-            inloggadKund.SkrivUtKonton();
+            inloggadKund.SkrivUtKonton(1);
             Console.ReadLine();
         }
 
         static void VisaKontoHistorik(Kund inloggadKund)
         {
+            Console.WriteLine("Vilket konto vill du se?");
+            Console.WriteLine();
+            Konto konto;
 
+            inloggadKund.SkrivUtKonton(2);
+
+            int index = int.Parse(Console.ReadLine());
+            konto = inloggadKund.FåKontolista[index - 1];
+
+            Console.WriteLine("Händels:");
+            Console.WriteLine("---------------------------------------------------------------");
+            konto.SkrivUtKontoHistorik();
+            Console.ReadLine();
+        }
+
+        static Lista<Kund> KontoInsättningar(Lista<Kund> kunder, Kund inloggadKund)
+        {
+            Console.WriteLine("Vilket konto vill du se?");
+            Console.WriteLine();
+            Konto konto;
+
+            for (int i = 0; i < inloggadKund.FåKontolista.Length(); i++)
+            {
+                inloggadKund.SkrivUtKonton(2);
+            }
+
+            int index = int.Parse(Console.ReadLine());
+            konto = inloggadKund.FåKontolista[index - 1];
+
+
+            Console.WriteLine("Händels:");
+            Console.WriteLine("---------------------------------------------------------------");
+            konto.SkrivUtKontoHistorik();
+            Console.ReadLine();
+            return kunder;
         }
     }
 }

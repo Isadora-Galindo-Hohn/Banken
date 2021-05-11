@@ -10,7 +10,7 @@ namespace BankenKlient
     {
         double lön;
 
-        public Lönekonto(string kontonamn, int saldo, string kundnummer, int kontonummer, double lön) :
+        public Lönekonto(string kontonamn, double saldo, string kundnummer, int kontonummer, double lön) :
             base(kontonamn, saldo, kundnummer, kontonummer)
         {
             this.lön = lön;
@@ -24,7 +24,7 @@ namespace BankenKlient
         public void GeUtLön()
         {
             saldo += lön;
-            kontoHistorik.Add("Löneinsättning: " + lön);
+            kontoHistorik.Add("Löneinsättning: \t\t" + lön);
         }
     }
 }

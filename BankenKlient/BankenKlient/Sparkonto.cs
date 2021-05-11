@@ -8,16 +8,18 @@ namespace BankenKlient
 {
     class Sparkonto : Konto, IRänta
     {
-        double ränta = 1.025;
+        double ränta = 1.03;
 
         public Sparkonto(string kontonamn, double saldo, string kundnummer, int kontonummer) :
             base(kontonamn, saldo, kundnummer, kontonummer) { }
+
+
 
         public void ImplemiteraRänta()
         {
             double räntevinst = (saldo * ränta) - saldo;
             saldo += räntevinst;
-            kontoHistorik.Add("Räntevinst: " + räntevinst);
+            kontoHistorik.Add("Räntevinst: \t\t" + räntevinst);
         }
     }
 }

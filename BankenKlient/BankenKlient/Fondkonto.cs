@@ -8,10 +8,10 @@ namespace BankenKlient
 {
     class Fondkonto : Konto, IRänta
     {
-        int risknivå;
+        double risknivå;
         double ränta;
 
-        public Fondkonto(string kontonamn, int saldo, string kundnummer, int kontonummer, int risk) :
+        public Fondkonto(string kontonamn, double saldo, string kundnummer, int kontonummer, double risk) :
             base(kontonamn, saldo, kundnummer, kontonummer)
         {
             this.risknivå = risk;
@@ -27,7 +27,7 @@ namespace BankenKlient
         {
             double fondförendring = (saldo * GenereraRänta()) - saldo;
             saldo += fondförendring;
-            kontoHistorik.Add("Fondförendring: " + fondförendring);
+            kontoHistorik.Add("Fondförendring: \t\t" + fondförendring);
         }
 
         double GenereraRänta()

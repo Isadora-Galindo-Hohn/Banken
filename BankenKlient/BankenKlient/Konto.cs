@@ -9,7 +9,7 @@ namespace BankenKlient
     class Konto: IKontoOperationer
     {
         protected double saldo;
-        string kontonummer;
+        protected string kontonummer;
         string kontonamn;
         protected Lista<string> kontoHistorik = new Lista<string>();
 
@@ -18,6 +18,14 @@ namespace BankenKlient
             this.kontonamn = kontonamn;
             this.saldo = saldo;
             this.kontonummer = kundnummer + "-" + kontonummer;
+        }
+
+        public string FåKontoNummer
+        {
+            get
+            {
+                return kontonummer;
+            }
         }
 
         public string FåKontoNamn
@@ -39,14 +47,22 @@ namespace BankenKlient
         public virtual void Uttag(double summa) 
         {
             saldo -= summa;
-            kontoHistorik.Add("Uttag: -" + summa);
+            kontoHistorik.Add("Uttag: \t\t-" + summa);
         }
 
         public void Insättning(double summa)
         {
             saldo += summa;
-            kontoHistorik.Add("Insättning: " + summa);
+            kontoHistorik.Add("Insättning: \t\t" + summa);
         }
 
+        public void SkrivUtKontoHistorik()
+        {
+            for (int i = 0; i < kontoHistorik.Length(); i++)
+            {
+                Console.WriteLine(kontoHistorik[i]);
+                Console.WriteLine();
+            }
+        }
     }
 }
