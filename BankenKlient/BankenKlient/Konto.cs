@@ -6,15 +6,17 @@ using System.Threading.Tasks;
 
 namespace BankenKlient
 {
-    class Konto: IKontoOperationer
+    class Konto : IKontoOperationer
     {
+        string kontotyp;
         protected double saldo;
         protected string kontonummer;
         string kontonamn;
         protected Lista<string> kontoHistorik = new Lista<string>();
 
-        public Konto(string kontonamn, double saldo, string kundnummer, int kontonummer) 
+        public Konto(string kontotyp, string kontonamn, double saldo, string kundnummer, int kontonummer)
         {
+            this.kontotyp = kontotyp;
             this.kontonamn = kontonamn;
             this.saldo = saldo;
             this.kontonummer = kundnummer + "-" + kontonummer;
@@ -44,20 +46,38 @@ namespace BankenKlient
             }
         }
 
-        public virtual void Uttag(double summa) 
+        public string FåKontotyp
+        {
+            get
+            {
+                return kontotyp;
+            }
+        }
+
+        public virtual void Uttag(double summa)
         {
             saldo -= summa;
             kontoHistorik.Add("Uttag: \t\t-" + summa);
         }
 
-        public void Insättning(double summa)
+        public virtual void Insättning(double summa)
         {
             saldo += summa;
             kontoHistorik.Add("Insättning: \t\t" + summa);
         }
 
-        public void SkrivUtKontoHistorik()
+        public virtual void SkrivUtKontoHistorik()
         {
+            Console.Clear();
+            Console.WriteLine("Händelser för konto " + kontonamn + ": ");
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Kontotyp: " + kontotyp);
+            Console.WriteLine("Kontonummer: " + kontonummer);
+            Console.WriteLine("Saldo: " + saldo);
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
             for (int i = 0; i < kontoHistorik.Length(); i++)
             {
                 Console.WriteLine(kontoHistorik[i]);

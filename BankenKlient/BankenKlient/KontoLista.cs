@@ -48,6 +48,15 @@ namespace BankenKlient
         {
             T[] newItems = new T[items.Length - 1];
 
+            int j = 0;
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (i != index)
+                {
+                    newItems[j] = items[i];
+                    j++;
+                }
+            }
 
             items = newItems;
         }

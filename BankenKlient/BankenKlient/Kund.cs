@@ -9,20 +9,20 @@ namespace BankenKlient
     class Kund
     {
         string namn;
-        int personnummer;
+        long personnummer;
         int antalKonton = 0;
         string kundnummer;
         Lista<Konto> konton = new Lista<Konto>();
 
         //Här sker overlode 
-        public Kund (string n)
+        public Kund(string n)
         {
             this.namn = n;
             kundnummer = SkapaKundnummer();
             antalKonton = konton.Length();
         }
 
-        public Kund(int p)
+        public Kund(long p)
         {
             this.personnummer = p;
             kundnummer = SkapaKundnummer();
@@ -33,19 +33,19 @@ namespace BankenKlient
         {
             if (kontotyp == "Debitkonto")
             {
-                konton.Add(new Konto(kontonamn, saldo, this.kundnummer, this.antalKonton++));
+                konton.Add(new Konto("Debitkonto", kontonamn, saldo, this.kundnummer, this.antalKonton++));
             }
             else if (kontotyp == "Lönekonto")
             {
-                konton.Add(new Lönekonto(kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
+                konton.Add(new Lönekonto("Lönekonto", kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
             }
             else if (kontotyp == "Sparkonto")
             {
-                konton.Add(new Sparkonto(kontonamn, saldo, this.kundnummer, this.antalKonton++));
+                konton.Add(new Sparkonto("Sparkonto", kontonamn, saldo, this.kundnummer, this.antalKonton++));
             }
             else if (kontotyp == "Fondkonto")
             {
-                konton.Add(new Fondkonto(kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
+                konton.Add(new Fondkonto("Fondkonto", kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
             }
         }
 
@@ -53,7 +53,7 @@ namespace BankenKlient
         {
             get
             {
-                return konton[konton.Length()-1];
+                return konton[konton.Length() - 1];
             }
         }
 
@@ -74,7 +74,7 @@ namespace BankenKlient
             }
         }
 
-        public int FåPersonnummer
+        public long FåPersonnummer
         {
             get
             {
@@ -89,30 +89,8 @@ namespace BankenKlient
             }
         }
 
-        public void SkrivUtKonton(int val)
-        {
-            if (val == 1)
-            {
-                for (int i = 0; i < konton.Length(); i++)
-                {
-                    Console.WriteLine(konton[i].FåKontoNamn + "\t\t" + konton[i].FåKontoSaldo);
-                    Console.WriteLine();
-                }
-            }
-            else if (val == 2)
-            {
-                for (int i = 0; i < konton.Length(); i++)
-                {
-                    Console.WriteLine((i+1) +konton[i].FåKontoNamn + "\t\t" + konton[i].FåKontoSaldo);
-                    Console.WriteLine();
-                }
-            }
-            
-        }
-
-
         //skapar kundnummer efter tiden då kunden skapas
-        private string SkapaKundnummer() 
+        private string SkapaKundnummer()
         {
             int nr = (int)DateTime.Now.ToFileTime();
 
@@ -121,6 +99,28 @@ namespace BankenKlient
                 nr *= -1;
             }
             return nr.ToString();
+        }
+
+        public void SkrivUtKonton()
+        {
+            for (int i = 0; i < konton.Length(); i++)
+            {
+                Console.WriteLine((i + 1) + ". " + konton[i].FåKontoNamn + "\t\t" + konton[i].FåKontoSaldo);
+                Console.WriteLine();
+            }
+        }
+
+        public void SkrivUtKund()
+        {
+            Console.WriteLine("Namn: " + FåNamn);
+            Console.WriteLine("Personnummer: " + FåPersonnummer);
+            Console.WriteLine("Kundnummer: " + FåKundnummer);
+            Console.WriteLine();
+            Console.WriteLine("Konton");
+            Console.WriteLine();
+            SkrivUtKonton();
+            Console.WriteLine("----------------------------------------------------------------------");
+            Console.WriteLine();
         }
     }
 }

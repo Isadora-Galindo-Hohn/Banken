@@ -8,6 +8,10 @@ namespace BankenKlient
 {
     class SaldoBlirNegativt : Exception
     {
-            public SaldoBlirNegativt() { }
+        public SaldoBlirNegativt() 
+        {
+            Console.WriteLine("Saldo blir negativt!");
+        }
+
     }
 }

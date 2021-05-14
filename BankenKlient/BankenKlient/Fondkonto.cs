@@ -11,21 +11,15 @@ namespace BankenKlient
         double risknivå;
         double ränta;
 
-        public Fondkonto(string kontonamn, double saldo, string kundnummer, int kontonummer, double risk) :
-            base(kontonamn, saldo, kundnummer, kontonummer)
+        public Fondkonto(string kontotyp, string kontonamn, double saldo, string kundnummer, int kontonummer, double risk) :
+            base(kontotyp, kontonamn, saldo, kundnummer, kontonummer)
         {
             this.risknivå = risk;
         }
 
-        //overridar basklassens uttag för att räkna med skatten med
-        public override void Uttag(double summa)
+        public void ImplementeraRänta()
         {
-            base.Uttag(summa * 1.3);  //simulerar att man betalar 30% skatt på fondkonton
-        }
-
-        public void ImplemiteraRänta()
-        {
-            double fondförendring = (saldo * GenereraRänta()) - saldo;
+            double fondförendring = (saldo * GenereraRänta());
             saldo += fondförendring;
             kontoHistorik.Add("Fondförendring: \t\t" + fondförendring);
         }
@@ -35,20 +29,40 @@ namespace BankenKlient
             if (risknivå == 1)
             {
                 Random generator = new Random();
-                ränta = generator.Next(-200, 200) / 100.0;
+                ränta = generator.Next(-10, 10) / 100.0;
             }
             else if (risknivå == 2)
             {
                 Random generator = new Random();
-                ränta = generator.Next(-300, 300) / 100.0;
+                ränta = generator.Next(-20, 20) / 100.0;
             }
             else if (risknivå == 3)
             {
                 Random generator = new Random();
-                ränta = generator.Next(-400, 400) / 100.0;
+                ränta = generator.Next(-30, 30) / 100.0;
             }
             return ränta;
         }
 
+        public override void SkrivUtKontoHistorik()
+        {
+            Console.Clear();
+            Console.WriteLine("Händelser för konto " + FåKontoNamn + ": ");
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine();
+            Console.WriteLine("Kontotyp: " + FåKontotyp);
+            Console.WriteLine("Kontonummer: " + kontonummer);
+            Console.WriteLine("Risknivå: " + risknivå);
+            Console.WriteLine("Ränta: " + ränta);
+            Console.WriteLine("Saldo: " + saldo);
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+            for (int i = 0; i < kontoHistorik.Length(); i++)
+            {
+                Console.WriteLine(kontoHistorik[i]);
+                Console.WriteLine();
+            }
+        }
     }
 }

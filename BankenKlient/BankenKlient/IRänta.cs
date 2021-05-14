@@ -8,6 +8,6 @@ namespace BankenKlient
 {
     interface IRänta
     {
-        void ImplemiteraRänta();
+        void ImplementeraRänta();
     }
 }
