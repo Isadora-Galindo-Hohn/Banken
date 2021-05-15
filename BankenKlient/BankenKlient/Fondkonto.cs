@@ -21,7 +21,10 @@ namespace BankenKlient
         {
             double fondförendring = (saldo * GenereraRänta());
             saldo += fondförendring;
-            kontoHistorik.Add("Fondförendring: \t\t" + fondförendring);
+            string insättningString = "Fondförendring: ," + fondförendring;
+            string[] split = insättningString.Split(',');
+            kontoHistorik.Add(split[0]);
+            kontoHistorik.Add(split[1]);
         }
 
         double GenereraRänta()

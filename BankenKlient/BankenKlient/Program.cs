@@ -246,7 +246,7 @@ namespace BankenKlient
                     string n = (Console.ReadLine());
 
                     nyKund = new Kund(n);
-                    Console.WriteLine("Du har nu skapat och loggat in med namnet " + n + " med kundnummret " + kunder[kunder.Length() - 1].FåKundnummer + "!");
+                    Console.WriteLine("Du har nu skapat och loggat in med namnet " + n + " med kundnummret " + nyKund.FåKundnummer + "!");
 
                     Console.ReadLine();
                     break;
@@ -591,7 +591,7 @@ namespace BankenKlient
             {
                 while (lyckad == false || index > inloggadKund.FåKontolista.Length())
                 {
-                    Console.WriteLine("Fel");
+                    Console.WriteLine("Fel"); //fixa
                     text = Console.ReadLine();
                     Console.WriteLine();
                     lyckad = int.TryParse(text, out index);
@@ -769,7 +769,7 @@ namespace BankenKlient
 
             Console.ReadLine();
         }
-        
+
         static Lista<Kund> RaderaKund(Lista<Kund> kunder)
         {
             Console.WriteLine("Vilken kund vill du radera?");
@@ -777,7 +777,7 @@ namespace BankenKlient
 
             for (int i = 0; i < kunder.Length(); i++)
             {
-                Console.WriteLine((i + 1) + ": " +kunder[i].FåKundnummer);
+                Console.WriteLine((i + 1) + ": " + kunder[i].FåKundnummer);
             }
 
             string text = Console.ReadLine();
@@ -807,6 +807,70 @@ namespace BankenKlient
             if ((konto.FåKontoSaldo - summa) < 0)
             {
                 throw new SaldoBlirNegativt();
+            }
+        }
+
+        static void SickaKunderTillServer(Lista<Kund> kunder)
+        {
+            try //Försöker ansluta till servern om det inte fungerar går det vidare till exception
+            {
+                string address = "127.0.0.1"; // är en local host
+                int port = 8001;
+
+                TcpClient tcpClient = new TcpClient();
+                tcpClient.Connect(address, port);
+
+                NetworkStream tcpStream = tcpClient.GetStream();
+
+                XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+                xmlWriterSettings.Indent = true;
+                xmlWriterSettings.NewLineOnAttributes = true;
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(tcpStream, xmlWriterSettings))
+                {
+                    //Skapar layouten och tillsätter den första användaren
+                    xmlWriter.WriteStartDocument();
+                    xmlWriter.WriteStartElement("kunder");
+
+                    for (int i = 0; i < kunder.Length(); i++)
+                    {
+                        xmlWriter.WriteStartElement("kund");
+
+                        xmlWriter.WriteElementString("namn", kunder[i].FåNamn);
+                        xmlWriter.WriteElementString("personnummer", kunder[i].FåPersonnummer.ToString());
+                        xmlWriter.WriteElementString("kundnummer", kunder[i].FåKundnummer);
+
+                        xmlWriter.WriteStartElement("konton");
+                        for (int j = 0; j < kunder[i].FåKontolista.Length(); j++)
+                        {
+                            xmlWriter.WriteElementString("kontotyp", kunder[i].FåKontolista[j].FåKontotyp);
+                            xmlWriter.WriteElementString("kontonamn", kunder[i].FåKontolista[j].FåKontoNamn);
+                            xmlWriter.WriteElementString("kontonummer", kunder[i].FåKontolista[j].FåKontoNummer);
+                            xmlWriter.WriteElementString("kontonamn", kunder[i].FåKontolista[j].FåKontoSaldo.ToString());
+
+                            xmlWriter.WriteStartElement("kontohistorik");
+                            for (int k = 0; k < kunder[i].FåKontolista[j].FåKontohistorik.Length(); k++)
+                            {
+                                xmlWriter.WriteElementString(kunder[i].FåKontolista[j].FåKontohistorik[i], kunder[i].FåKontolista[j].FåKontohistorik[i + 1]);
+                                k++;
+                            }
+                            xmlWriter.WriteEndElement();
+                        }
+                        xmlWriter.WriteEndElement();
+
+                        xmlWriter.WriteEndElement();
+                    }
+
+                    xmlWriter.WriteEndDocument();
+                    xmlWriter.Flush(); //Sickas iväg
+                    xmlWriter.Close();
+                }
+
+                tcpClient.Close();
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }

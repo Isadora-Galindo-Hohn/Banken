@@ -32,7 +32,10 @@ namespace BankenKlient
         public void GeUtLön()
         {
             saldo += lön;
-            kontoHistorik.Add("Löneinsättning: \t\t" + lön);
+            string insättningString = "Löneinsättning: ," + lön;
+            string[] split = insättningString.Split(',');
+            kontoHistorik.Add(split[0]);
+            kontoHistorik.Add(split[1]);
         }
 
         public override void SkrivUtKontoHistorik()
