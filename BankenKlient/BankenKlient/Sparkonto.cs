@@ -25,10 +25,7 @@ namespace BankenKlient
         {
             double räntevinst = (saldo * ränta) - saldo;
             saldo += räntevinst;
-            string insättningString = "Räntevinst: ," + räntevinst;
-            string[] split = insättningString.Split(',');
-            kontoHistorik.Add(split[0]);
-            kontoHistorik.Add(split[1]);
+            kontoHistorik.Add("Räntevinst: " + räntevinst);
         }
 
         public override void SkrivUtKontoHistorik()

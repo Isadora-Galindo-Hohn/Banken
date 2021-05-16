@@ -29,6 +29,13 @@ namespace BankenKlient
             antalKonton = konton.Length();
         }
 
+        public Kund(string n, long p, string k)
+        {
+            this.namn = n;
+            this.personnummer = p;
+            this.kundnummer = k;
+        }
+
         public void SkapaNyttKonto(string kontotyp, string kontonamn, double saldo, double extraParameter = 0)
         {
             if (kontotyp == "Debitkonto")

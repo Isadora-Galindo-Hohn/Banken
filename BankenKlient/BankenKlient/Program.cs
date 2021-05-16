@@ -15,15 +15,25 @@ namespace BankenKlient
         static void Main(string[] args)
         {
             Lista<Kund> kunder = new Lista<Kund>();
-
             Kund inloggadKund = null;
+            bool loggatUt = false;
+            try
+            {
+                kunder = TaEmotKunder();
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Något gick fel kontakta kundservice försök igen senare");
+                Console.ReadLine();
+                loggatUt = true;
+            }
 
-            while (true)
+            while (loggatUt == false)
             {
                 //meny som består av en switch som skickar använderen till olika metoder beroende på vilket case som anropas
                 string menyVal = "";
 
-                while (inloggadKund == null || menyVal != "5")
+                while (inloggadKund == null || menyVal != "5" || loggatUt == true)
                 {
                     Console.Clear();
                     Console.WriteLine();
@@ -35,7 +45,7 @@ namespace BankenKlient
                     Console.WriteLine("2. Logga in");
                     Console.WriteLine("3. Visa alla kunder");
                     Console.WriteLine("4. Radera kund");
-                    Console.WriteLine("5. Avsluta programmet");
+                    Console.WriteLine("5. Spara och avsluta programmet");
                     Console.WriteLine("Skriv in siffra mellan 1-3 och tryck sedan Enter...");
                     Console.WriteLine();
 
@@ -57,11 +67,37 @@ namespace BankenKlient
                             break;
 
                         case "3":
-                            VisaKunder(kunder);
+                            if (kunder.Length() < 1)
+                            {
+                                Console.WriteLine("Det finns inga konton.");
+                                Console.ReadLine();
+                            }
+                            else
+                            {
+                                VisaKunder(kunder);
+                            }
                             break;
 
                         case "4":
-                            kunder = RaderaKund(kunder);
+                            if (kunder.Length() < 1)
+                            {
+                                Console.WriteLine("Det finns inga konton att radera.");
+                                Console.ReadLine();
+                            }
+                            else
+                            {
+                                kunder = RaderaKund(kunder);
+                            }
+                            break;
+
+                        case "5":
+                            loggatUt = SkickaKunderTillServer(kunder);
+                            if (loggatUt == false)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine("Du lyckades inte logga ut.");
+                                Console.ReadLine();
+                            }
                             break;
 
                         default: //default gör att så läge stringen inte är lika med 1-3 går den hit och visar menyn igen
@@ -69,9 +105,6 @@ namespace BankenKlient
                     }
                     break;
                 }
-
-                menyVal = "";
-
                 if (inloggadKund != null)
                 {
                     while (inloggadKund != null || menyVal != "7")
@@ -88,7 +121,7 @@ namespace BankenKlient
                         Console.WriteLine("4. Gör konto insättning");
                         Console.WriteLine("5. Gör konto uttag");
                         Console.WriteLine("6. Radera konto");
-                        Console.WriteLine("7. Spara och logga ut");
+                        Console.WriteLine("7. Återgå till huvudmeny och logga ut");
                         Console.WriteLine("Skriv in siffra mellan 1-6 och tryck sedan Enter...");
                         Console.WriteLine();
 
@@ -163,8 +196,6 @@ namespace BankenKlient
 
                             case "7":
                                 inloggadKund = null;
-                                Console.WriteLine("Du har nu loggat ut");
-                                Console.ReadLine();
                                 break;
 
                             default: //default gör att så läge stringen inte är lika med 1-3 går den hit och visar menyn igen
@@ -172,7 +203,11 @@ namespace BankenKlient
                         }
                     }
                 }
-
+            }
+            if (loggatUt == true)
+            {
+                Console.WriteLine("Du har loggat ut!");
+                Console.ReadLine();
             }
         }
 
@@ -210,9 +245,10 @@ namespace BankenKlient
 
                     if (lyckad == false || p.ToString().Length > 12)
                     {
-                        while (lyckad == false || p.ToString().Length > 12)
+                        while (lyckad == false || p.ToString().Length > 12 || p == 0)
                         {
                             Console.WriteLine("Personnummret ska vara skrivet i siffror och max 12 siffror långt. ex. 200211041111");
+                            Console.WriteLine("Personnummret får inte vara 0");
                             Console.Write("Personnummer: ");
                             text = Console.ReadLine();
                             Console.WriteLine();
@@ -292,9 +328,10 @@ namespace BankenKlient
 
                     if (lyckad == false || p.ToString().Length > 12)
                     {
-                        while (lyckad == false || p.ToString().Length > 12)
+                        while (lyckad == false || p.ToString().Length > 12 || p == 0)
                         {
                             Console.WriteLine("Personnummret ska vara skrivet i siffror och max 12 siffror långt. ex. 200211041111");
+                            Console.WriteLine("Personnummret får inte vara 0");
                             Console.Write("Personnummer: ");
                             text = Console.ReadLine();
                             Console.WriteLine();
@@ -562,7 +599,7 @@ namespace BankenKlient
             {
                 while (lyckad == false || index > inloggadKund.FåKontolista.Length())
                 {
-                    Console.WriteLine("Fel");
+                    Console.WriteLine("Ange ett konto som t.ex. 1.");
                     textIndex = Console.ReadLine();
                     Console.WriteLine();
                     lyckad = int.TryParse(textIndex, out index);
@@ -745,8 +782,8 @@ namespace BankenKlient
                 }
             }
 
-            inloggadKund.FåKontolista.Remove(index - 1);
             Console.WriteLine("Du har nu raderat kontot " + inloggadKund.FåKontolista[index - 1].FåKontoNamn + ".");
+            inloggadKund.FåKontolista.Remove(index - 1);
             Console.ReadLine();
 
             for (int i = 0; i < kunder.Length(); i++)
@@ -810,8 +847,10 @@ namespace BankenKlient
             }
         }
 
-        static void SickaKunderTillServer(Lista<Kund> kunder)
+        static bool SkickaKunderTillServer(Lista<Kund> kunder)
         {
+            SkickaValTillServer("2");
+            bool lyckad = false;
             try //Försöker ansluta till servern om det inte fungerar går det vidare till exception
             {
                 string address = "127.0.0.1"; // är en local host
@@ -843,17 +882,33 @@ namespace BankenKlient
                         xmlWriter.WriteStartElement("konton");
                         for (int j = 0; j < kunder[i].FåKontolista.Length(); j++)
                         {
+                            xmlWriter.WriteStartElement("konto");
                             xmlWriter.WriteElementString("kontotyp", kunder[i].FåKontolista[j].FåKontotyp);
                             xmlWriter.WriteElementString("kontonamn", kunder[i].FåKontolista[j].FåKontoNamn);
                             xmlWriter.WriteElementString("kontonummer", kunder[i].FåKontolista[j].FåKontoNummer);
-                            xmlWriter.WriteElementString("kontonamn", kunder[i].FåKontolista[j].FåKontoSaldo.ToString());
+                            xmlWriter.WriteElementString("saldo", kunder[i].FåKontolista[j].FåKontoSaldo.ToString());
+
+                            if (kunder[i].FåKontolista[j] is Fondkonto)
+                            {
+                                xmlWriter.WriteElementString("risknivå", ((Fondkonto)kunder[i].FåKontolista[j]).FåRisk.ToString());
+                            }
+                            else if (kunder[i].FåKontolista[j] is Lönekonto)
+                            {
+                                xmlWriter.WriteElementString("lön", ((Lönekonto)kunder[i].FåKontolista[j]).FåLön.ToString());
+                            }
+                            else if (kunder[i].FåKontolista[j] is Sparkonto)
+                            {
+                                xmlWriter.WriteElementString("ränta", ((Sparkonto)kunder[i].FåKontolista[j]).FåRänta.ToString());
+                            }
 
                             xmlWriter.WriteStartElement("kontohistorik");
+                            xmlWriter.WriteElementString("kontonummer", kunder[i].FåKontolista[j].FåKontoNummer);
                             for (int k = 0; k < kunder[i].FåKontolista[j].FåKontohistorik.Length(); k++)
                             {
-                                xmlWriter.WriteElementString(kunder[i].FåKontolista[j].FåKontohistorik[i], kunder[i].FåKontolista[j].FåKontohistorik[i + 1]);
-                                k++;
+                                xmlWriter.WriteElementString("kontohändelse", kunder[i].FåKontolista[j].FåKontohistorik[k]);
                             }
+                            xmlWriter.WriteEndElement();
+
                             xmlWriter.WriteEndElement();
                         }
                         xmlWriter.WriteEndElement();
@@ -867,11 +922,114 @@ namespace BankenKlient
                 }
 
                 tcpClient.Close();
+                lyckad = true;
             }
             catch (Exception e)
             {
-
+                Console.WriteLine("Error: " + e);
             }
+            return lyckad;
+        }
+
+        static Lista<Kund> TaEmotKunder()
+        {
+            SkickaValTillServer("1");
+            Lista<Kund> kunder = new Lista<Kund>();
+
+            string address = "127.0.0.1"; // är en local host
+            int port = 8001;
+
+            TcpClient tcpClient = new TcpClient();
+            tcpClient.Connect(address, port);
+
+            using (NetworkStream stream = tcpClient.GetStream())
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(stream);
+
+                XmlNodeList kunderna = xmlDoc.SelectNodes("kunder/kund");
+                XmlNodeList konton = xmlDoc.SelectNodes("kunder/kund/konton/konto");
+                XmlNodeList kontohistoriken = xmlDoc.SelectNodes("kunder/kund/konton/konto/kontohistorik");
+
+                //Skapa ett Book-element för varje nod och lägg i media listan:
+                foreach (XmlNode kund in kunderna)
+                {
+                    string namn = kund.SelectSingleNode("namn").InnerText;
+                    long personnummer = long.Parse(kund.SelectSingleNode("personnummer").InnerText);
+                    string kundnummer = kund.SelectSingleNode("kundnummer").InnerText;
+                    Kund tempK = new Kund(namn, personnummer, kundnummer);
+
+                    foreach (XmlNode konto in konton)
+                    {
+                        string kontonummer = konto.SelectSingleNode("kontonummer").InnerText;
+                        string[] kundnummerArr = kontonummer.Split('-');
+
+                        if (kundnummerArr[0] == kundnummer)
+                        {
+                            string kontotyp = konto.SelectSingleNode("kontotyp").InnerText;
+                            string kontonamn = konto.SelectSingleNode("kontonamn").InnerText;
+                            double saldo = double.Parse(konto.SelectSingleNode("saldo").InnerText);
+
+                            if (kontotyp == "Lönekonto")
+                            {
+                                double lön = double.Parse(konto.SelectSingleNode("lön").InnerText);
+                                tempK.SkapaNyttKonto(kontotyp, kontonamn, saldo, lön);
+                            }
+                            else if (kontotyp == "Fondkonto")
+                            {
+                                double risknivå = double.Parse(konto.SelectSingleNode("risknivå").InnerText);
+                                tempK.SkapaNyttKonto(kontotyp, kontonamn, saldo, risknivå);
+                            }
+                            else
+                            {
+                                tempK.SkapaNyttKonto(kontotyp, kontonamn, saldo);
+                            }
+
+                            foreach (XmlNode kontohistorik in kontohistoriken)
+                            {
+                                if (kontohistorik.ParentNode.SelectSingleNode("kontonummer").InnerText == kontonummer)
+                                {
+                                    for (int i = 1; i < kontohistorik.ChildNodes.Count; i++)
+                                    {
+                                        string händelse = kontohistorik.ChildNodes[i].InnerText;
+                                        tempK.FåNyasteKonto.LäggTillKontoHändelse(händelse);
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    kunder.Add(tempK);
+                }
+            }
+            return kunder;
+        }
+
+        static void SkickaValTillServer(string val)
+        {
+            try //Försöker ansluta till servern om det inte fungerar går det vidare till exception
+            {
+                string address = "127.0.0.1"; // är en local host
+                int port = 8001;
+
+                TcpClient tcpClient = new TcpClient();
+                tcpClient.Connect(address, port);
+
+                byte[] menyValByte = Encoding.Unicode.GetBytes(val);
+
+                //Sickar iväg menyvalet till servern
+                NetworkStream tcpStream = tcpClient.GetStream();
+                tcpStream.Write(menyValByte, 0, menyValByte.Length);
+
+                // Stäng anslutningen:
+                tcpClient.Close();
+            }
+            catch (Exception e)//felmedelande ifall servern inte svarar
+            {
+                Console.WriteLine("Error: " + e.Message);
+            }
+
         }
     }
 }

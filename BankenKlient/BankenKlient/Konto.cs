@@ -57,19 +57,13 @@ namespace BankenKlient
         public virtual void Uttag(double summa)
         {
             saldo -= summa;
-            string insättningString = "Uttag: ," + summa;
-            string[] split = insättningString.Split(',');
-            kontoHistorik.Add(split[0]);
-            kontoHistorik.Add(split[1]);
+            kontoHistorik.Add("Uttag: " + summa);
         }
 
         public virtual void Insättning(double summa)
         {
             saldo += summa;
-            string insättningString = "Insättning: ," + summa;
-            string[] split = insättningString.Split(',');
-            kontoHistorik.Add(split[0]);
-            kontoHistorik.Add(split[1]);
+            kontoHistorik.Add("Insättning: " + summa);
         }
 
         public Lista<string> FåKontohistorik
@@ -78,6 +72,11 @@ namespace BankenKlient
             {
                 return kontoHistorik;
             }
+        }
+
+        public void LäggTillKontoHändelse(string s)
+        {
+            kontoHistorik.Add(s);
         }
 
         public virtual void SkrivUtKontoHistorik()
@@ -94,9 +93,8 @@ namespace BankenKlient
             Console.WriteLine("---------------------------------------------------------------");
             for (int i = 0; i < kontoHistorik.Length(); i++)
             {
-                Console.WriteLine(kontoHistorik[i] + " " + kontoHistorik[i+1]);
+                Console.WriteLine(kontoHistorik[i]);
                 Console.WriteLine();
-                i++;
             }
         }
     }

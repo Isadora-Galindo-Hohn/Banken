@@ -21,10 +21,7 @@ namespace BankenKlient
         {
             double fondförendring = (saldo * GenereraRänta());
             saldo += fondförendring;
-            string insättningString = "Fondförendring: ," + fondförendring;
-            string[] split = insättningString.Split(',');
-            kontoHistorik.Add(split[0]);
-            kontoHistorik.Add(split[1]);
+            kontoHistorik.Add("Fondförendring: " + fondförendring);
         }
 
         double GenereraRänta()
@@ -45,6 +42,14 @@ namespace BankenKlient
                 ränta = generator.Next(-30, 30) / 100.0;
             }
             return ränta;
+        }
+
+        public double FåRisk
+        {
+            get
+            {
+                return risknivå;
+            }
         }
 
         public override void SkrivUtKontoHistorik()
