@@ -10,28 +10,28 @@ namespace BankenKlient
         string kundnummer;
         Lista<Konto> konton = new Lista<Konto>();
 
-        //Här sker overlode 
+        //Här sker overload
         public Kund(string n)
         {
             this.namn = n;
             kundnummer = SkapaKundnummer();
             antalKonton = konton.Length();
         }
-
+        //Här sker en till overload
         public Kund(long p)
         {
             this.personnummer = p;
             kundnummer = SkapaKundnummer();
             antalKonton = konton.Length();
         }
-
+        //Här sker en till overload
         public Kund(string n, long p, string k)
         {
             this.namn = n;
             this.personnummer = p;
             this.kundnummer = k;
         }
-
+        //Metod för att skapa konto utifrån vilken kontotyp som kunden vill skapa
         public void SkapaNyttKonto(string kontotyp, string kontonamn, double saldo, double extraParameter = 0)
         {
             if (kontotyp == "Debitkonto")
@@ -51,7 +51,7 @@ namespace BankenKlient
                 konton.Add(new Fondkonto("Fondkonto", kontonamn, saldo, this.kundnummer, this.antalKonton++, extraParameter));
             }
         }
-
+        //Returnerar det nyaste kontot
         public Konto FåNyasteKonto
         {
             get
@@ -59,7 +59,7 @@ namespace BankenKlient
                 return konton[konton.Length() - 1];
             }
         }
-
+        //Returnerar en lista på konton
         public Lista<Konto> FåKontolista
         {
             get
@@ -68,7 +68,7 @@ namespace BankenKlient
             }
         }
 
-
+        //Returnerar kundnummer
         public string FåKundnummer
         {
             get
@@ -76,7 +76,7 @@ namespace BankenKlient
                 return kundnummer;
             }
         }
-
+        //Returnerar personnummer
         public long FåPersonnummer
         {
             get
@@ -84,6 +84,7 @@ namespace BankenKlient
                 return personnummer;
             }
         }
+        //returnerar namn
         public string FåNamn
         {
             get
@@ -103,7 +104,7 @@ namespace BankenKlient
             }
             return nr.ToString();
         }
-
+        //Skriver ut alla konton som kunden har
         public void SkrivUtKonton()
         {
             for (int i = 0; i < konton.Length(); i++)
@@ -112,7 +113,7 @@ namespace BankenKlient
                 Console.WriteLine();
             }
         }
-
+        //Skriver ut kunden
         public void SkrivUtKund()
         {
             Console.WriteLine("Namn: " + FåNamn);

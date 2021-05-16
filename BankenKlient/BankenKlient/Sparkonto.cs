@@ -3,12 +3,12 @@
 namespace BankenKlient
 {
     class Sparkonto : Konto, IRänta
-    {
-        double ränta = 1.03;
+    {   //Static då räntan ej kan förändras och är fast för alla konton.
+        static double ränta = 1.03;
 
         public Sparkonto(string kontotyp, string kontonamn, double saldo, string kundnummer, int kontonummer) :
             base(kontotyp, kontonamn, saldo, kundnummer, kontonummer) { }
-
+        //Returnerar ränta
         public double FåRänta
         {
             get
@@ -16,14 +16,14 @@ namespace BankenKlient
                 return ränta;
             }
         }
-
+        //Implementerar ränta från interface IRänta
         public void ImplementeraRänta()
         {
             double räntevinst = (saldo * ränta) - saldo;
             saldo += räntevinst;
             kontoHistorik.Add("Räntevinst: " + räntevinst);
         }
-
+        //Skriver ut kontohistorik, override då den skriver ut med ränta
         public override void SkrivUtKontoHistorik()
         {
             Console.Clear();

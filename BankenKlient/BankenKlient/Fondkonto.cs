@@ -12,14 +12,14 @@ namespace BankenKlient
         {
             this.risknivå = risk;
         }
-
+        //Implementerar ränta från IRänta
         public void ImplementeraRänta()
         {
             double fondförendring = (saldo * GenereraRänta());
             saldo += fondförendring;
             kontoHistorik.Add("Fondförendring: " + fondförendring);
         }
-
+        //Genererar en slumpmässig ränta
         double GenereraRänta()
         {
             if (risknivå == 1)
@@ -39,7 +39,7 @@ namespace BankenKlient
             }
             return ränta;
         }
-
+        //Returnerar risk
         public double FåRisk
         {
             get
@@ -47,7 +47,7 @@ namespace BankenKlient
                 return risknivå;
             }
         }
-
+        //Skriver ut kontohistorik, override då den har med risknivå
         public override void SkrivUtKontoHistorik()
         {
             Console.Clear();
@@ -58,7 +58,6 @@ namespace BankenKlient
             Console.WriteLine("Kontotyp: " + FåKontotyp);
             Console.WriteLine("Kontonummer: " + kontonummer);
             Console.WriteLine("Risknivå: " + risknivå);
-            Console.WriteLine("Ränta: " + ränta);
             Console.WriteLine("Saldo: " + saldo);
             Console.WriteLine();
             Console.WriteLine("---------------------------------------------------------------");

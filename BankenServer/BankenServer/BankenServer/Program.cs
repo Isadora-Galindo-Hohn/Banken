@@ -47,7 +47,7 @@ namespace BankenServer
                             menyVal += Convert.ToChar(menyValByte[i]);
                         }
                     }
-
+                    
                     if (menyVal == "1")
                     {
                         SickaKunder();
@@ -68,13 +68,13 @@ namespace BankenServer
         static void SickaKunder()
         {
             try
-            {
+            {   //skapar en socket
                 Socket socket = tcpListener.AcceptSocket();
 
                 Console.WriteLine("Startades");
-
+                //Kontrollerar ifall filen existerar
                 if (File.Exists("kunder.xml"))
-                {
+                {   //Skickar xml dokumentet via networkstream
                     using (NetworkStream ns = new NetworkStream(socket))
                     {
                         XmlDocument xmlDoc = new XmlDocument();
@@ -87,7 +87,7 @@ namespace BankenServer
                     }
                     socket.Close();
                 }
-                else
+                else //Skapar nytt xml dokument med root element, men annars tomt, för att skicka till klienten
                 {
                     XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
                     xmlWriterSettings.Indent = true;
@@ -105,7 +105,7 @@ namespace BankenServer
                         xmlWriter.Flush();
                         xmlWriter.Close();
                     }
-
+                    //Skickar xml dokumentet till klienten med networkstream
                     using (NetworkStream ns = new NetworkStream(socket))
                     {
                         XmlDocument xmlDoc = new XmlDocument();
@@ -130,7 +130,7 @@ namespace BankenServer
             try
             {
                 TcpClient c = tcpListener.AcceptTcpClient();
-
+                //Tar emot xml dokumentet från networkstream och sparar det som kunder.xml
                 using (NetworkStream stream = c.GetStream())
                 {
                     XmlDocument xmlDoc = new XmlDocument();

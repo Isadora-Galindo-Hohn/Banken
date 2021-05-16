@@ -11,12 +11,7 @@ namespace BankenKlient
         {
             this.lön = lön;
         }
-
-        public void ÄndraLön(double nyLön)
-        {
-            lön = nyLön;
-        }
-
+        //Returnerar lön
         public double FåLön
         {
             get
@@ -24,13 +19,13 @@ namespace BankenKlient
                 return lön;
             }
         }
-
+        //Ger ut lönen till ett konto
         public void GeUtLön()
         {
             saldo += lön;
             kontoHistorik.Add("Löneinsättning: " + lön);
         }
-
+        //Skriver ut kontohistorik med lön.
         public override void SkrivUtKontoHistorik()
         {
             Console.Clear();

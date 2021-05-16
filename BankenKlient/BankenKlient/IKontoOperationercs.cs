@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BankenKlient
+﻿namespace BankenKlient
 {
     interface IKontoOperationer
     {
+        //Ett interface, tvingar alla klasser där de implementeras att metoden uttag och insättningar ska finnas
         void Uttag(double summa);
 
         void Insättning(double summa);

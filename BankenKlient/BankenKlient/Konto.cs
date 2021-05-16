@@ -9,7 +9,7 @@ namespace BankenKlient
         protected string kontonummer;
         string kontonamn;
         protected Lista<string> kontoHistorik = new Lista<string>();
-
+        
         public Konto(string kontotyp, string kontonamn, double saldo, string kundnummer, int kontonummer)
         {
             this.kontotyp = kontotyp;
@@ -17,7 +17,7 @@ namespace BankenKlient
             this.saldo = saldo;
             this.kontonummer = kundnummer + "-" + kontonummer;
         }
-
+        //Returnerar kontonummer
         public string FåKontoNummer
         {
             get
@@ -25,7 +25,7 @@ namespace BankenKlient
                 return kontonummer;
             }
         }
-
+        //Returnerar kontonamn
         public string FåKontoNamn
         {
             get
@@ -33,7 +33,7 @@ namespace BankenKlient
                 return kontonamn;
             }
         }
-
+        //Returnrear saldo
         public double FåKontoSaldo
         {
             get
@@ -41,7 +41,7 @@ namespace BankenKlient
                 return saldo;
             }
         }
-
+        //Returnerar kontotyp
         public string FåKontotyp
         {
             get
@@ -49,19 +49,19 @@ namespace BankenKlient
                 return kontotyp;
             }
         }
-
-        public virtual void Uttag(double summa)
+        //En  metod för uttag
+        public void Uttag(double summa)
         {
             saldo -= summa;
             kontoHistorik.Add("Uttag: " + summa);
         }
-
+        //En virituell metod för insättning, olika kontotyper sätter in pengar på olika sätt
         public virtual void Insättning(double summa)
         {
             saldo += summa;
             kontoHistorik.Add("Insättning: " + summa);
         }
-
+        //Returnerar kontohistorik
         public Lista<string> FåKontohistorik
         {
             get
@@ -69,12 +69,12 @@ namespace BankenKlient
                 return kontoHistorik;
             }
         }
-
+        //Lägger till kontohistorik. används vid skapande av kundlista
         public void LäggTillKontoHändelse(string s)
         {
             kontoHistorik.Add(s);
         }
-
+        //Skriver ut kontohistorik för ett konto
         public virtual void SkrivUtKontoHistorik()
         {
             Console.Clear();
